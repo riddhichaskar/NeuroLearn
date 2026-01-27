@@ -1,0 +1,174 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Futuristic Dark Theme - Particle Network Design System */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@layer base {
+  :root {
+    --background: 220 20% 4%;
+    --foreground: 180 100% 95%;
+
+    --card: 220 25% 6%;
+    --card-foreground: 180 100% 95%;
+
+    --popover: 220 25% 6%;
+    --popover-foreground: 180 100% 95%;
+
+    --primary: 175 80% 50%;
+    --primary-foreground: 220 20% 4%;
+
+    --secondary: 220 20% 12%;
+    --secondary-foreground: 180 100% 90%;
+
+    --muted: 220 20% 15%;
+    --muted-foreground: 220 15% 55%;
+
+    --accent: 160 70% 45%;
+    --accent-foreground: 220 20% 4%;
+
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 20% 15%;
+    --input: 220 20% 12%;
+    --ring: 175 80% 50%;
+
+    --radius: 0.75rem;
+
+    /* Custom tokens */
+    --glow-primary: 175 80% 50%;
+    --glow-accent: 160 70% 45%;
+    --glass: 220 25% 8%;
+    --glass-border: 220 20% 20%;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(175 80% 50%) 0%, hsl(160 70% 45%) 100%);
+    --gradient-dark: linear-gradient(180deg, hsl(220 20% 6%) 0%, hsl(220 20% 4%) 100%);
+    --gradient-glow: radial-gradient(ellipse at center, hsl(175 80% 50% / 0.15) 0%, transparent 70%);
+    
+    /* Shadows */
+    --shadow-glow: 0 0 30px hsl(175 80% 50% / 0.3);
+    --shadow-glow-sm: 0 0 15px hsl(175 80% 50% / 0.2);
+    --shadow-card: 0 4px 30px hsl(220 20% 0% / 0.5);
+
+    --sidebar-background: 220 20% 4%;
+    --sidebar-foreground: 180 100% 95%;
+    --sidebar-primary: 175 80% 50%;
+    --sidebar-primary-foreground: 220 20% 4%;
+    --sidebar-accent: 220 20% 12%;
+    --sidebar-accent-foreground: 180 100% 90%;
+    --sidebar-border: 220 20% 15%;
+    --sidebar-ring: 175 80% 50%;
+  }
+
+  .dark {
+    --background: 220 20% 4%;
+    --foreground: 180 100% 95%;
+    --card: 220 25% 6%;
+    --card-foreground: 180 100% 95%;
+    --popover: 220 25% 6%;
+    --popover-foreground: 180 100% 95%;
+    --primary: 175 80% 50%;
+    --primary-foreground: 220 20% 4%;
+    --secondary: 220 20% 12%;
+    --secondary-foreground: 180 100% 90%;
+    --muted: 220 20% 15%;
+    --muted-foreground: 220 15% 55%;
+    --accent: 160 70% 45%;
+    --accent-foreground: 220 20% 4%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 20% 15%;
+    --input: 220 20% 12%;
+    --ring: 175 80% 50%;
+    --sidebar-background: 220 20% 4%;
+    --sidebar-foreground: 180 100% 95%;
+    --sidebar-primary: 175 80% 50%;
+    --sidebar-primary-foreground: 220 20% 4%;
+    --sidebar-accent: 220 20% 12%;
+    --sidebar-accent-foreground: 180 100% 90%;
+    --sidebar-border: 220 20% 15%;
+    --sidebar-ring: 175 80% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-card/80 backdrop-blur-xl border border-glass-border rounded-xl;
+    box-shadow: var(--shadow-card);
+  }
+
+  .glow-text {
+    text-shadow: 0 0 20px hsl(var(--primary) / 0.5), 0 0 40px hsl(var(--primary) / 0.3);
+  }
+
+  .glow-border {
+    box-shadow: inset 0 0 0 1px hsl(var(--primary) / 0.3), var(--shadow-glow-sm);
+  }
+
+  .blueprint-grid {
+    background-image: 
+      linear-gradient(hsl(var(--primary) / 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--primary) / 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-primary);
+  }
+
+  .card-hover {
+    @apply transition-all duration-300;
+  }
+
+  .card-hover:hover {
+    @apply border-primary/40;
+    box-shadow: var(--shadow-glow);
+    transform: translateY(-2px);
+  }
+
+  .stat-glow {
+    @apply relative;
+  }
+
+  .stat-glow::after {
+    content: '';
+    @apply absolute inset-0 rounded-full blur-xl opacity-30;
+    background: hsl(var(--primary));
+  }
+
+  .timeline-dot {
+    @apply relative;
+  }
+
+  .timeline-dot::before {
+    content: '';
+    @apply absolute inset-0 rounded-full animate-ping;
+    background: hsl(var(--primary) / 0.4);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

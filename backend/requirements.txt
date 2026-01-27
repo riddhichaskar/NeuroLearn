@@ -1,0 +1,36 @@
+# Core Framework
+fastapi
+uvicorn
+gunicorn
+
+# HTTP Clients & Scraping
+requests
+aiohttp
+httpx
+beautifulsoup4
+lxml
+feedparser
+
+# AI/ML with GPU Support
+
+transformers
+accelerate
+
+# Image Generation
+diffusers
+pillow
+opencv-python
+
+# Text Processing
+nltk
+newspaper3k
+
+# Utilities
+pydantic
+asyncio-throttle
+psutil
+python-multipart
+aiofiles
+
+# Performance
+httptools
