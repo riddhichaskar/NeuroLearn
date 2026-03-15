@@ -7,8 +7,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import {DevNewsPage} from "./components/devnews/DevNewsPage";
-import TechTrendsPage from "./pages/TechTrendsPage";
-import GitHubIntelPage from "./pages/GitHubIntelPage";
+import TechTrendsPage from "./pages/techtrend/TechTrendsPage";
+import GitHubIntelPage from "./pages/github_intel/GitHubIntelPage";
 
 const queryClient = new QueryClient();
 

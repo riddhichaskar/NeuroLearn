@@ -8,7 +8,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
-import { ForecastChart } from '@/components/ForecastChart';
+import { ForecastChart } from '@/components/techtrend/ForecastChart';
 import { ChartSkeleton } from '@/components/ui/LoadingSkeleton';
 import { ErrorState } from '@/components/ui/StateComponents';
 import { fetchStacks, fetchForecast, Stack, ForecastData } from '@/lib/api';

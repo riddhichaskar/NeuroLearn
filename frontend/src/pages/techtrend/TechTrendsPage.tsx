@@ -3,13 +3,13 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route } from "react-router-dom"; // Removed BrowserRouter
-import { AppLayout } from "../components/AppLayout"; // Adjusted path assumption
+import { AppLayout } from "../../components/AppLayout"; // Adjusted path assumption
 import DashboardOverview from "./DashboardOverview";
 import StackExplorer from "./StackExplorer";
 import CategoryAnalytics from "./CategoryAnalytics";
 import StackForecast from "./StackForecast";
 import StackComparison from "./StackComparison";
-import NotFound from "./NotFound";
+import NotFound from "../NotFound";
 
 const queryClient = new QueryClient();
 

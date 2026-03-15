@@ -16,7 +16,7 @@ import Competitors from "./Competitors";
 import AITools from "./AITools";
 import Ingestion from "./Ingestion";
 import SystemHealth from "./SystemHealth";
-import NotFound from "./NotFound";
+import NotFound from "../NotFound";
 
 const queryClient = new QueryClient();
 

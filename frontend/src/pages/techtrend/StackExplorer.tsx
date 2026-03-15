@@ -10,8 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { StackCard } from '@/components/StackCard';
-import { TrendBadge } from '@/components/TrendBadge';
+import { StackCard } from '@/components/techtrend/StackCard';
+import { TrendBadge } from '@/components/techtrend/TrendBadge';
 import { CardGridSkeleton } from '@/components/ui/LoadingSkeleton';
 import { ErrorState, EmptyState } from '@/components/ui/StateComponents';
 import { fetchStacks, fetchCategories, Stack, Category } from '@/lib/api';

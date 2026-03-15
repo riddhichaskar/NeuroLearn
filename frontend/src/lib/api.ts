@@ -1,227 +1,212 @@
-import axios from 'axios';
+import axios from "axios"
 
-const API_BASE_URL = '/api/v1';
+const API_BASE_URL = "http://localhost:8002/api/v1"
 
 const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10000,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
-});
+})
 
-// Types
+/* =========================
+   TYPES
+========================= */
+
 export interface Stack {
-  name: string;
-  category: string;
-  avg_daily_activity: number;
-  total_activity: number;
-  trend: 'growing' | 'stable';
-  model_type: string;
-  forecast_horizon: number;
-  last_trained: string;
+  name: string
+  category: string
+  avg_daily_activity: number
+  total_activity: number
+  trend: "growing" | "stable"
+  model_type: string
+  last_trained: string
 }
 
 export interface Category {
-  name: string;
-  stack_count: number;
-  total_activity: number;
-  avg_daily_activity: number;
+  name: string
+  stack_count: number
+  total_activity: number
+  avg_daily_activity: number
 }
 
 export interface ForecastPoint {
-  date: string;
-  predicted: number;
-  lower_bound: number;
-  upper_bound: number;
+  date: string
+  predicted: number
+  lower_bound: number
+  upper_bound: number
 }
 
 export interface ForecastData {
-  stack_name: string;
-  forecast: ForecastPoint[];
-  recent_average: number;
-  historical_total: number;
-  trend_direction: 'up' | 'down' | 'stable';
-  model_used: string;
-  confidence_interval: number;
-}
-
-export interface DashboardData {
-  total_stacks: number;
-  total_categories: number;
-  total_activity: number;
-  growing_stacks_count: number;
-  avg_daily_activity: number;
-  top_growing_stacks: Stack[];
-  category_distribution: { name: string; value: number }[];
-  categories: {
-    name: string;
-    stacks: Stack[];
-    total_activity: number;
-    avg_daily_activity: number;
-  }[];
+  stack_name: string
+  forecast: ForecastPoint[]
+  recent_average: number
+  historical_total: number
+  trend_direction: "up" | "down" | "stable"
+  model_used: string
+  confidence_interval: number
 }
 
 export interface ComparisonData {
   stacks: {
-    name: string;
-    category: string;
-    trend: 'growing' | 'stable';
-    total_activity: number;
-    avg_daily_activity: number;
-    max_daily: number;
-    min_daily: number;
-  }[];
+    name: string
+    category: string
+    trend: "growing" | "stable"
+    total_activity: number
+    avg_daily_activity: number
+    max_daily: number
+    min_daily: number
+  }[]
 }
 
 export interface CategoryTrend {
-  category: string;
-  stacks: Stack[];
-  top_stacks: Stack[];
-  fastest_growing: Stack[];
+  category: string
+  stacks: Stack[]
+  top_stacks: Stack[]
+  fastest_growing: Stack[]
 }
 
-// Mock data generators for development
-const generateMockStacks = (): Stack[] => {
-  const categories = ['Frontend', 'Backend', 'Database', 'DevOps', 'Mobile', 'AI/ML'];
-  const stacks = [
-    'React', 'Vue', 'Angular', 'Svelte', 'Next.js',
-    'Node.js', 'Python', 'Go', 'Rust', 'Java',
-    'PostgreSQL', 'MongoDB', 'Redis', 'MySQL', 'Elasticsearch',
-    'Docker', 'Kubernetes', 'Terraform', 'AWS', 'Azure',
-    'React Native', 'Flutter', 'Swift', 'Kotlin', 'Ionic',
-    'TensorFlow', 'PyTorch', 'OpenAI', 'LangChain', 'Hugging Face'
-  ];
+/* =========================
+   STACKS
+========================= */
 
-  return stacks.map((name, index) => ({
-    name,
-    category: categories[Math.floor(index / 5)],
-    avg_daily_activity: Math.floor(Math.random() * 5000) + 500,
-    total_activity: Math.floor(Math.random() * 500000) + 50000,
-    trend: Math.random() > 0.4 ? 'growing' : 'stable',
-    model_type: 'Prophet',
-    forecast_horizon: 30,
-    last_trained: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
-  }));
-};
+export const fetchStacks = async (): Promise<Stack[]> => {
+  const res = await api.get("/stacks")
 
-const generateMockCategories = (): Category[] => {
-  return [
-    { name: 'Frontend', stack_count: 5, total_activity: 850000, avg_daily_activity: 28333 },
-    { name: 'Backend', stack_count: 5, total_activity: 920000, avg_daily_activity: 30667 },
-    { name: 'Database', stack_count: 5, total_activity: 670000, avg_daily_activity: 22333 },
-    { name: 'DevOps', stack_count: 5, total_activity: 580000, avg_daily_activity: 19333 },
-    { name: 'Mobile', stack_count: 5, total_activity: 420000, avg_daily_activity: 14000 },
-    { name: 'AI/ML', stack_count: 5, total_activity: 780000, avg_daily_activity: 26000 },
-  ];
-};
+  const stacks = res.data.stacks || res.data
 
-const generateMockForecast = (stackName: string, days: number): ForecastData => {
-  const forecast: ForecastPoint[] = [];
-  const baseValue = Math.random() * 3000 + 1000;
-  const trend = Math.random() > 0.5 ? 1.02 : 0.99;
+  return stacks.map((s: any) => ({
+    name: s.stack,
+    category: s.category,
+    avg_daily_activity: s.average_daily ?? s.statistics?.average_daily ?? 0,
+    total_activity: s.total_activity ?? s.statistics?.total_activity ?? 0,
+    trend: s.trend ?? s.statistics?.trend ?? "stable",
+    model_type: s.model?.type ?? "ML Model",
+    last_trained: s.trained_at ?? new Date().toISOString(),
+  }))
+}
 
-  for (let i = 0; i < days; i++) {
-    const date = new Date();
-    date.setDate(date.getDate() + i);
-    const predicted = baseValue * Math.pow(trend, i) + (Math.random() - 0.5) * 200;
-    forecast.push({
-      date: date.toISOString().split('T')[0],
-      predicted: Math.round(predicted),
-      lower_bound: Math.round(predicted * 0.85),
-      upper_bound: Math.round(predicted * 1.15),
-    });
-  }
+/* =========================
+   CATEGORIES
+========================= */
 
-  return {
-    stack_name: stackName,
-    forecast,
-    recent_average: Math.round(baseValue),
-    historical_total: Math.round(baseValue * 365),
-    trend_direction: trend > 1 ? 'up' : 'stable',
-    model_used: 'Prophet',
-    confidence_interval: 95,
-  };
-};
+export const fetchCategories = async (): Promise<Category[]> => {
+  const res = await api.get("/categories")
 
-const generateMockDashboard = (): DashboardData => {
-  const stacks = generateMockStacks();
-  const growingStacks = stacks.filter(s => s.trend === 'growing').sort((a, b) => b.avg_daily_activity - a.avg_daily_activity);
+  const categories = res.data.categories || res.data
 
-  return {
-    total_stacks: stacks.length,
-    total_categories: 6,
-    total_activity: stacks.reduce((sum, s) => sum + s.total_activity, 0),
-    growing_stacks_count: growingStacks.length,
-    avg_daily_activity: Math.round(stacks.reduce((sum, s) => sum + s.avg_daily_activity, 0) / stacks.length),
-    top_growing_stacks: growingStacks.slice(0, 8),
-    category_distribution: generateMockCategories().map(c => ({ name: c.name, value: c.total_activity })),
-    categories: generateMockCategories().map(c => ({
-      name: c.name,
-      stacks: stacks.filter(s => s.category === c.name),
-      total_activity: c.total_activity,
-      avg_daily_activity: c.avg_daily_activity,
-    })),
-  };
-};
+  return categories.map((c: any) => ({
+    name: c.category,
+    stack_count: c.stack_count ?? (c.stacks ? c.stacks.length : 0),
+    total_activity: c.total_activity ?? 0,
+    avg_daily_activity: c.average_daily ?? 0,
+  }))
+}
 
-const generateMockComparison = (stackNames: string[]): ComparisonData => {
-  const allStacks = generateMockStacks();
-  return {
-    stacks: stackNames.map(name => {
-      const stack = allStacks.find(s => s.name.toLowerCase() === name.toLowerCase()) || {
-        name,
-        category: 'Unknown',
-        trend: 'stable' as const,
-        total_activity: Math.floor(Math.random() * 500000),
-        avg_daily_activity: Math.floor(Math.random() * 5000),
-      };
-      return {
-        ...stack,
-        max_daily: Math.round(stack.avg_daily_activity * 1.5),
-        min_daily: Math.round(stack.avg_daily_activity * 0.5),
-      };
-    }),
-  };
-};
+/* =========================
+   CATEGORY TRENDS
+========================= */
 
-const generateMockCategoryTrend = (category: string): CategoryTrend => {
-  const stacks = generateMockStacks().filter(s => s.category.toLowerCase() === category.toLowerCase());
-  const sorted = [...stacks].sort((a, b) => b.avg_daily_activity - a.avg_daily_activity);
-  const growing = stacks.filter(s => s.trend === 'growing').sort((a, b) => b.avg_daily_activity - a.avg_daily_activity);
+export const fetchCategoryTrends = async (
+  category: string
+): Promise<CategoryTrend> => {
+
+  const res = await api.get("/stacks")
+
+  const stacks = (res.data.stacks || res.data)
+    .filter((s: any) => s.category === category)
+    .map((s: any) => ({
+      name: s.stack,
+      category: s.category,
+      avg_daily_activity: s.average_daily ?? s.statistics?.average_daily ?? 0,
+      total_activity: s.total_activity ?? s.statistics?.total_activity ?? 0,
+      trend: s.trend ?? s.statistics?.trend ?? "stable",
+      model_type: s.model?.type ?? "ML Model",
+      last_trained: s.trained_at ?? new Date().toISOString(),
+    }))
+
+  const sorted = [...stacks].sort(
+    (a, b) => b.avg_daily_activity - a.avg_daily_activity
+  )
+
+  const growing = sorted.filter((s) => s.trend === "growing")
 
   return {
     category,
     stacks,
-    top_stacks: sorted.slice(0, 5),
+    top_stacks: sorted.slice(0, 6),
     fastest_growing: growing.slice(0, 3),
-  };
-};
+  }
+}
 
-// API Functions with mock fallback
-export const fetchStacks = async (): Promise<Stack[]> => {
-  // Always use mock data for demo
-  return generateMockStacks();
-};
+/* =========================
+   FORECAST
+========================= */
 
-export const fetchCategories = async (): Promise<Category[]> => {
-  return generateMockCategories();
-};
+export const fetchForecast = async (
+  stackName: string,
+  days: number = 30
+): Promise<ForecastData> => {
 
-export const fetchForecast = async (stackName: string, days: number = 30): Promise<ForecastData> => {
-  return generateMockForecast(stackName, days);
-};
+  const res = await api.get(`/forecast/${stackName}?days=${days}`)
+  const d = res.data
 
-export const fetchDashboard = async (): Promise<DashboardData> => {
-  return generateMockDashboard();
-};
+  return {
+    stack_name: d.stack,
+    forecast: d.predictions.map((p: any) => ({
+      date: p.date,
+      predicted: p.predicted_activity,
+      lower_bound: p.confidence_lower,
+      upper_bound: p.confidence_upper
+    })),
+    recent_average: d.historical_stats?.recent_average ?? 0,
+    historical_total: d.historical_stats?.total_activity ?? 0,
+    trend_direction:
+      d.historical_stats?.trend === "growing"
+        ? "up"
+        : d.historical_stats?.trend === "declining"
+        ? "down"
+        : "stable",
+    model_used: d.metadata?.model_used ?? "prophet",
+    confidence_interval: Math.round((d.confidence_interval ?? 0.95) * 100)
+  }
+}
 
-export const fetchComparison = async (stacks: string[]): Promise<ComparisonData> => {
-  return generateMockComparison(stacks);
-};
+/* =========================
+   DASHBOARD
+========================= */
 
-export const fetchCategoryTrends = async (category: string): Promise<CategoryTrend> => {
-  return generateMockCategoryTrend(category);
-};
+export const fetchDashboard = async () => {
 
-export default api;
+  const res = await api.get("/dashboard")
+
+  return res.data
+}
+
+/* =========================
+   COMPARISON
+========================= */
+
+export const fetchComparison = async (
+  stacks: string[]
+): Promise<ComparisonData> => {
+
+  const stackQuery = stacks.join(",")
+
+  const res = await api.get(`/compare?stacks=${stackQuery}`)
+
+  const items = res.data.comparison || []
+
+  return {
+    stacks: items.map((s: any) => ({
+      name: s.stack,
+      category: s.category,
+      trend: s.trend,
+      total_activity: s.total_activity,
+      avg_daily_activity: Math.round(s.average_daily),
+      max_daily: s.max_daily,
+      min_daily: s.min_daily,
+    })),
+  }
+}
